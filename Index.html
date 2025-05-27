@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KLC Lying in Clinic</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e 0%, #ffffff 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    color: #5a2a42;
+    overflow-x: hidden;
+  }
+  .title-container {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 1rem 3rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+    box-shadow: inset 0 0 15px rgba(255, 105, 145, 0.4), 0 4px 10px rgba(255, 192, 203, 0.5);
+  }
+  h1 {
+    font-size: 3.5rem;
+    margin: 0;
+    color: #c94f67;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.9);
+  }
+  .button-container {
+    display: flex;
+    gap: 1.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 700px;
+    margin-top: 4rem;
+  }
+  button, a.button-link {
+    background: #e66c7c;
+    border: none;
+    border-radius: 12px;
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(230,108,124,0.4);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    min-width: 180px;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+  button:hover, a.button-link:hover {
+    background: #b9485e;
+    box-shadow: 0 12px 20px rgba(185,72,94,0.6);
+    transform: translateY(-3px);
+  }
+  @media (max-width: 480px) {
+    .title-container {
+      margin-top: 1.5rem;
+      padding: 0.8rem 2rem;
+    }
+    h1 {
+      font-size: 2.4rem;
+      text-align: center;
+    }
+    .button-container {
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+    }
+    button, a.button-link {
+      width: 100%;
+      max-width: 300px;
+      min-width: unset;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="title-container">
+    <h1>KLC Lying in Clinic</h1>
+  </div>
+  <div class="button-container">
+    <a href="appointment.html" class="button-link">Appointment</a>
+    <a href="Billing.html" class="button-link">Billing</a>
+    <a href="Records.html" class="button-link">Records Management</a>
+    <a href="Inventory.html" class="button-link">Inventory</a
+  <div>
+</body>
+</html>

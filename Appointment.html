@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Make an Appointment - KLC Lying in Clinic</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e 0%, #ffffff 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #5a2a42;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+  .title-container {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 1rem 3rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: inset 0 0 15px rgba(255, 105, 145, 0.4), 0 4px 10px rgba(255, 192, 203, 0.5);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    font-size: 2.8rem;
+    color: #c94f67;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.9);
+  }
+  form, .summary-container {
+    background: rgba(255,255,255,0.9);
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 500px;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  input {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    margin-bottom: 1.2rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    color: #5a2a42;
+  }
+  input:focus {
+    outline: none;
+    border-color: #e66c7c;
+    box-shadow: 0 0 5px #e66c7c;
+  }
+  button.submit-btn, button#saveBtn {
+    background: #e66c7c;
+    border: none;
+    border-radius: 12px;
+    padding: 0.9rem;
+    width: 100%;
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  button.submit-btn:hover, button#saveBtn:hover {
+    background: #b9485e;
+  }
+  .back-link {
+    margin-top: 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #e66c7c;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    text-align: center;
+    display: block;
+  }
+  .back-link:hover {
+    color: #b9485e;
+  }
+  .summary-container h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .summary-details {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #5a2a42;
+  }
+  @media (max-width: 480px) {
+    .title-container {
+      padding: 1rem 1.5rem;
+      font-size: 2rem;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    form, .summary-container {
+      padding: 1.5rem 1.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="title-container">
+    <h1>Make an Appointment</h1>
+  </div>
+  <form id="appointmentForm" novalidate>
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="name" required autocomplete="name" placeholder="Your full name" />
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+
+    <label for="date">Date</label>
+    <input type="date" id="date" name="date" required min="" />
+
+    <label for="time">Time</label>
+    <input type="time" id="time" name="time" required />
+
+    <button type="submit" class="submit-btn">Submit</button>
+  </form>
+
+  <div class="summary-container" id="summary" style="display:none;">
+    <h2>Appointment Summary</h2>
+    <div class="summary-details" id="summaryDetails"></div>
+    <button id="saveBtn">Save Receipt</button>
+  </div>
+
+  <a href="Homepage.html" class="back-link">&larr; Back to Home</a>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  const form = document.getElementById('appointmentForm');
+  const summary = document.getElementById('summary');
+  const summaryDetails = document.getElementById('summaryDetails');
+  const saveBtn = document.getElementById('saveBtn');
+  const dateInput = form.date;
+
+  function setMinDate() {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+  }
+  setMinDate();
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const date = form.date.value;
+    const time = form.time.value;
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date(date).toLocaleDateString(undefined, options);
+    const formattedTime = time || '';
+
+    summaryDetails.innerHTML = `
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Date:</strong> ${formattedDate}</p>
+      <p><strong>Time:</strong> ${formattedTime}</p>
+    `;
+
+    form.style.display = 'none';
+    summary.style.display = 'block';
+  });
+
+  saveBtn.addEventListener('click', () => {
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const date = form.date.value;
+    const time = form.time.value;
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = new Date(date).toLocaleDateString(undefined, options);
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("KLC Lying in Clinic", 105, 20, { align: "center" });
+    doc.setFontSize(14);
+    doc.text("Appointment Receipt", 105, 30, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.text(`Name: ${name}`, 20, 50);
+    doc.text(`Email: ${email}`, 20, 60);
+    doc.text(`Date: ${formattedDate}`, 20, 70);
+    doc.text(`Time: ${time}`, 20, 80);
+    doc.text("Thank you for scheduling your appointment with us!", 20, 100);
+
+    doc.save(`Appointment_Receipt_${name.replace(/\s+/g, '_')}.pdf`);
+  });
+</script>
+</body>
+</html>

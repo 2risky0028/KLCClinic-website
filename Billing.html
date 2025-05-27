@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Billing - KLC Lying in Clinic</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ff9a9e 0%, #ffffff 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #5a2a42;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+  .title-container {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 1rem 3rem;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: inset 0 0 15px rgba(255, 105, 145, 0.4), 0 4px 10px rgba(255, 192, 203, 0.5);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    font-size: 2.8rem;
+    color: #c94f67;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.9);
+  }
+  form, .summary-container {
+    background: rgba(255,255,255,0.9);
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 500px;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  input {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    margin-bottom: 1.2rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    color: #5a2a42;
+  }
+  input:focus {
+    outline: none;
+    border-color: #e66c7c;
+    box-shadow: 0 0 5px #e66c7c;
+  }
+  button.submit-btn, button#saveBtn {
+    background: #e66c7c;
+    border: none;
+    border-radius: 12px;
+    padding: 0.9rem;
+    width: 100%;
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+  }
+  button.submit-btn:hover, button#saveBtn:hover {
+    background: #b9485e;
+  }
+  .back-link {
+    margin-top: 2rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: #e66c7c;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    text-align: center;
+    display: block;
+  }
+  .back-link:hover {
+    color: #b9485e;
+  }
+  .summary-container h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .summary-details {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #5a2a42;
+  }
+  @media (max-width: 480px) {
+    .title-container {
+      padding: 1rem 1.5rem;
+      font-size: 2rem;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    form, .summary-container {
+      padding: 1.5rem 1.8rem;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="title-container">
+    <h1>Billing</h1>
+  </div>
+  <form id="billingForm" novalidate>
+    <label for="patientName">Patient Name</label>
+    <input type="text" id="patientName" name="patientName" required placeholder="Patient full name" />
+
+    <label for="billingId">Billing ID</label>
+    <input type="text" id="billingId" name="billingId" required placeholder="Enter billing ID" />
+
+    <label for="amount">Amount (₱)</label>
+    <input type="number" id="amount" name="amount" required min="0" step="0.01" placeholder="Amount in Peso" />
+
+    <button type="submit" class="submit-btn">Submit</button>
+  </form>
+
+  <div class="summary-container" id="summary" style="display:none;">
+    <h2>Billing Receipt</h2>
+    <div class="summary-details" id="summaryDetails"></div>
+    <button id="saveBtn">Save Receipt</button>
+  </div>
+
+  <a href="Homepage.html" class="back-link">&larr; Back to Home</a>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  const form = document.getElementById('billingForm');
+  const summary = document.getElementById('summary');
+  const summaryDetails = document.getElementById('summaryDetails');
+  const saveBtn = document.getElementById('saveBtn');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const patientName = form.patientName.value.trim();
+    const billingId = form.billingId.value.trim();
+    const amount = parseFloat(form.amount.value).toFixed(2);
+
+    const detailsText = `
+      <p><strong>Patient Name:</strong> ${patientName}</p>
+      <p><strong>Billing ID:</strong> ${billingId}</p>
+      <p><strong>Amount:</strong> ₱${amount}</p>
+    `;
+
+    summaryDetails.innerHTML = detailsText;
+
+    form.style.display = 'none';
+    summary.style.display = 'block';
+  });
+
+  saveBtn.addEventListener('click', () => {
+    const patientName = form.patientName.value.trim();
+    const billingId = form.billingId.value.trim();
+    const amount = parseFloat(form.amount.value).toFixed(2);
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("KLC Lying in Clinic", 105, 20, { align: "center" });
+    doc.setFontSize(14);
+    doc.text("Billing Receipt", 105, 30, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.text(`Patient Name: ${patientName}`, 20, 50);
+    doc.text(`Billing ID: ${billingId}`, 20, 60);
+    doc.text(`Amount: ${amount}`, 20, 70);
+    doc.text("Thank you for your payment!", 20, 90);
+
+    doc.save(`Billing_Receipt_${patientName.replace(/\s+/g, '_')}.pdf`);
+  });
+</script>
+</body>
+</html>
